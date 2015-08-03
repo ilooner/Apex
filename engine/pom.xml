@@ -278,6 +278,11 @@
       <artifactId>xbean-asm5-shaded</artifactId>
       <version>4.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
