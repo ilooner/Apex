@@ -55,7 +55,7 @@ import com.google.common.collect.Lists;
 public class OperatorDiscoveryTest
 {
 //  private static final Logger LOG = LoggerFactory.getLogger(OperatorDiscoveryTest.class);
-  
+
   public static class GenericClassBase<T> extends BaseOperator
   {
     private int A;
@@ -269,7 +269,7 @@ public class OperatorDiscoveryTest
   @Test
   public void testPropertyDiscovery() throws Exception
   {
-    
+
     String[] classFilePath = getClassFileInClasspath();
     OperatorDiscoverer od = new OperatorDiscoverer(classFilePath);
     od.buildTypeGraph();
@@ -341,8 +341,8 @@ public class OperatorDiscoveryTest
     props = desc.getJSONArray("properties");
     genericArray = getJSONProperty(props, "genericArray");
     Assert.assertEquals(debug + "type " + genericArray, String[].class.getName(), genericArray.get("type"));
-    
-    
+
+
     // Test complicated Type Variable override in Hierarchy
     desc = od.describeClassByASM(SubSubClass.class.getName());
     props = desc.getJSONArray("properties");
@@ -552,9 +552,9 @@ public class OperatorDiscoveryTest
         return false;
       return true;
     }
-    
-    
-    
+
+
+
 
   }
 
@@ -571,7 +571,7 @@ public class OperatorDiscoveryTest
     private long longProp;
     private double doubleProp;
     private boolean booleanProp;
-    
+
     private Integer integerProp;
     private List<String> stringList;
     private List<Structured> nestedList;
@@ -610,39 +610,39 @@ public class OperatorDiscoveryTest
     {
       return mProp;
     }
-    
+
     public String getAlias()
     {
       return realName;
     }
-    
+
     public void setAlias(String alias)
     {
       realName = alias;
     }
-    
+
     public String getGetterOnly()
     {
       return getterOnly;
     }
-    
-    
+
+
     public URI getUri()
     {
       return uri;
     }
-    
+
     public void setUri(URI uri)
     {
       this.uri = uri;
     }
-    
-    
+
+
     public void setIntegerProp(Integer integerProp)
     {
       this.integerProp = integerProp;
     }
-    
+
     public Integer getIntegerProp()
     {
       return integerProp;
@@ -732,7 +732,7 @@ public class OperatorDiscoveryTest
     {
       return stringArray;
     }
-    
+
     public void setStringArray(String[] stringArray)
     {
       this.stringArray = stringArray;
@@ -856,15 +856,15 @@ public class OperatorDiscoveryTest
   static class ExtendedOperator extends TestOperator<String, Map<String, Number>>
   {
   }
-  
+
   public static class BaseClass<A, B, C>
   {
     private A a;
-    
+
     private B b;
 
     private C c;
-    
+
     public void setA(A a)
     {
       this.a = a;
@@ -873,12 +873,12 @@ public class OperatorDiscoveryTest
     {
       this.b = b;
     }
-    
+
     public A getA()
     {
       return a;
     }
-    
+
     public B getB()
     {
       return b;
@@ -888,7 +888,7 @@ public class OperatorDiscoveryTest
     {
       this.c = c;
     }
-    
+
     public C getC()
     {
       return c;
@@ -898,28 +898,28 @@ public class OperatorDiscoveryTest
   public static class SubClass<D, A extends Number> extends BaseClass<Number, A, D>
   {
     private D d;
-    
+
     public void setD(D d)
     {
       this.d = d;
     }
-    
+
     public D getD()
     {
       return d;
     }
-    
+
   }
 
   public static class SubSubClass<E extends Runnable> extends SubClass<List<String>, Long>
   {
     private E e;
-    
+
     public void setE(E e)
     {
       this.e = e;
     }
-    
+
     public E getE()
     {
       return e;
@@ -973,7 +973,7 @@ public class OperatorDiscoveryTest
     Assert.assertArrayEquals(ah.intArray, clone.intArray);
 
   }
-  
+
   @Test
   public void testLogicalPlanConfiguration() throws Exception
   {
@@ -993,13 +993,13 @@ public class OperatorDiscoveryTest
     ObjectMapper mapper = ObjectMapperFactory.getOperatorValueSerializer();
     String s = mapper.writeValueAsString(bean);
 //    LOG.debug(new JSONObject(s).toString(2));
-    // 
+    //
     Assert.assertTrue("Shouldn't contain field 'realName' !", !s.contains("realName"));
     Assert.assertTrue("Should contain property 'alias' !", s.contains("alias"));
     Assert.assertTrue("Shouldn't contain property 'getterOnly' !", !s.contains("getterOnly"));
     JSONObject jsonObj = new JSONObject(s);
-    
-    // create the json dag representation 
+
+    // create the json dag representation
     JSONObject jsonPlan = new JSONObject();
     jsonPlan.put("streams", new JSONArray());
     JSONObject jsonOper = new JSONObject();
@@ -1007,17 +1007,17 @@ public class OperatorDiscoveryTest
     jsonOper.put("class", TestOperator.class.getName());
     jsonOper.put("properties", jsonObj);
     jsonPlan.put("operators", new JSONArray(Lists.newArrayList(jsonOper)));
-    
-    
+
+
     Configuration conf = new Configuration(false);
     LogicalPlanConfiguration lpc = new LogicalPlanConfiguration(conf);
-    // create logical plan from the json 
+    // create logical plan from the json
     LogicalPlan lp = lpc.createFromJson(jsonPlan, "jsontest");
     OperatorMeta om = lp.getOperatorMeta("Test Operator");
     Assert.assertTrue(om.getOperator() instanceof TestOperator);
     @SuppressWarnings("rawtypes")
     TestOperator beanBack = (TestOperator) om.getOperator();
-    
+
     // The operator deserialized back from json should be same as original operator
     Assert.assertEquals(bean.map, beanBack.map);
     Assert.assertArrayEquals(bean.stringArray, beanBack.stringArray);
@@ -1029,8 +1029,8 @@ public class OperatorDiscoveryTest
     Assert.assertEquals(bean.booleanProp, beanBack.booleanProp);
     Assert.assertEquals(bean.realName, beanBack.realName);
     Assert.assertEquals(bean.getterOnly, beanBack.getterOnly);
-    
-    
+
+
   }
 
 }
