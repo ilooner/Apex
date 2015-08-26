@@ -160,39 +160,18 @@ public class LogicalPlanConfiguration {
   protected enum ConfElement
   {
     @SuppressWarnings("SetReplaceableByEnumSet")
-    STRAM(null,
-          null,
-          new HashSet<StramElement>(),
-          null),
+    STRAM(null, null, new HashSet<StramElement>(), null),
     @SuppressWarnings("SetReplaceableByEnumSet")
-    APPLICATION(StramElement.APPLICATION,
-                STRAM,
-                new HashSet<StramElement>(),
-                DAGContext.class),
+    APPLICATION(StramElement.APPLICATION, STRAM, new HashSet<StramElement>(), DAGContext.class),
     @SuppressWarnings("SetReplaceableByEnumSet")
-    TEMPLATE(StramElement.TEMPLATE,
-             STRAM,
-             new HashSet<StramElement>(),
-             null),
+    TEMPLATE(StramElement.TEMPLATE, STRAM, new HashSet<StramElement>(), null),
     @SuppressWarnings("SetReplaceableByEnumSet")
-    GATEWAY(StramElement.GATEWAY,
-            ConfElement.APPLICATION,
-            new HashSet<StramElement>(),
-            null),
+    GATEWAY(StramElement.GATEWAY, ConfElement.APPLICATION, new HashSet<StramElement>(), null),
     @SuppressWarnings("SetReplaceableByEnumSet")
-    OPERATOR(StramElement.OPERATOR,
-             ConfElement.APPLICATION,
-             new HashSet<StramElement>(),
-             OperatorContext.class),
+    OPERATOR(StramElement.OPERATOR, ConfElement.APPLICATION, new HashSet<StramElement>(), OperatorContext.class),
     @SuppressWarnings("SetReplaceableByEnumSet")
-    STREAM(StramElement.STREAM,
-           ConfElement.APPLICATION,
-           new HashSet<StramElement>(),
-           null),
-    PORT(StramElement.PORT,
-         ConfElement.OPERATOR,
-         Sets.newHashSet(StramElement.INPUT_PORT, StramElement.OUTPUT_PORT),
-         PortContext.class);
+    STREAM(StramElement.STREAM, ConfElement.APPLICATION, new HashSet<StramElement>(), null),
+    PORT(StramElement.PORT, ConfElement.OPERATOR, Sets.newHashSet(StramElement.INPUT_PORT, StramElement.OUTPUT_PORT), PortContext.class);
 
     public static final Map<StramElement, ConfElement> STRAM_ELEMENT_TO_CONF_ELEMENT = Maps.newHashMap();
     public static final Map<Class<? extends Context>, ConfElement> CONTEXT_TO_CONF_ELEMENT = Maps.newHashMap();
@@ -847,9 +826,7 @@ public class LogicalPlanConfiguration {
         if (Context.class.isAssignableFrom(clazz)) {
           contextClass = (Class<? extends Context>)clazz;
         } else {
-          throw new IllegalArgumentException("The provided context class name "
-                                             + contextClassName
-                                             + " is not valid.");
+          throw new IllegalArgumentException("The provided context class name " + contextClassName + " is not valid.");
         }
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException(ex);
@@ -858,9 +835,7 @@ public class LogicalPlanConfiguration {
       String simpleAttributeName = getSimpleAttributeName(attributeName);
 
       if (!ContextUtils.CONTEXT_CLASS_TO_ATTRIBUTES.get(contextClass).contains(simpleAttributeName)) {
-        throw new ValidationException(simpleAttributeName
-                                      + " is not a valid attribute of "
-                                      + contextClass);
+        throw new ValidationException(simpleAttributeName + " is not a valid attribute of " + contextClass);
       }
 
       return contextClass;
@@ -879,9 +854,7 @@ public class LogicalPlanConfiguration {
       }
 
       if (attributeName.endsWith(KEY_SEPARATOR)) {
-        throw new IllegalArgumentException("The given attribute name ends with \""
-                                           + KEY_SEPARATOR
-                                           + "\" so a simple name cannot be extracted.");
+        throw new IllegalArgumentException("The given attribute name ends with \"" + KEY_SEPARATOR + "\" so a simple name cannot be extracted.");
       }
 
       return attributeName.substring(attributeName.lastIndexOf(KEY_SEPARATOR) + 1, attributeName.length());
@@ -1046,12 +1019,7 @@ public class LogicalPlanConfiguration {
           conf = declaredConstructor.newInstance(new Object[] {});
           conf.setId(id);
           map.put(id, conf);
-        } catch (IllegalAccessException |
-                 IllegalArgumentException |
-                 InstantiationException |
-                 NoSuchMethodException |
-                 SecurityException |
-                 InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
           LOG.error("Error instantiating configuration", e);
         }
       }
@@ -1736,17 +1704,12 @@ public class LogicalPlanConfiguration {
             }
 
             if (!conf.getConfElement().getAllChildAttributes().contains(attributeName)) {
-              throw new ValidationException(attributeName
-                                            + " is not defined for the "
-                                            + conf.getConfElement().getStramElement()
-                                            + " or any of its child configurations.");
+              throw new ValidationException(attributeName + " is not defined for the " + conf.getConfElement().getStramElement() + " or any of its child configurations.");
             }
 
             if (conf.getConfElement().getAmbiguousAttributes().contains(attributeName)) {
               //If the attribute name is ambiguous at this configuration level we should tell the user.
-              LOG.warn("The attribute "
-                       + attributeName
-                       + " is ambiguous when specified on an " + conf.getConfElement().getStramElement());
+              LOG.warn("The attribute " + attributeName + " is ambiguous when specified on an " + conf.getConfElement().getStramElement());
             }
 
             if (conf.getConfElement().getContextAttributes().contains(attributeName)) {
