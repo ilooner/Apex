@@ -653,7 +653,10 @@ public class StreamingContainer extends YarnContainerMain
           OperatorContext context = e.getValue().context;
           context.drainStats(hb.getOperatorStatsContainer());
 
+          logger.info("context thread {}", context.getThread());
+
           if (context.getThread() == null || context.getThread().getState() != Thread.State.TERMINATED) {
+
             hb.setState(DeployState.ACTIVE);
           }
           else if (failedNodes.contains(hb.nodeId)) {
@@ -1355,10 +1358,12 @@ public class StreamingContainer extends YarnContainerMain
         @Override
         public void run()
         {
+          node.context.setThread(Thread.currentThread());
           HashSet<OperatorDeployInfo> setOperators = new HashSet<OperatorDeployInfo>();
           OperatorDeployInfo currentdi = ndi;
           try {
             /* primary operator initialization */
+
             setupNode(currentdi);
             setOperators.add(currentdi);
 
