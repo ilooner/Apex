@@ -1403,13 +1403,15 @@ public class StreamingContainer extends YarnContainerMain
             else {
               failedNodes.add(currentdi.id);
               logger.error("Abandoning deployment of operator {} due to setup failure.", currentdi, ex);
+              logger.error("Before umbilical");
               int[] operators = new int[]{currentdi.id};
               umbilical.reportError(containerId, operators, "Abandoning deployment due to setup failure. " + ExceptionUtils.getStackTrace(ex));
+              logger.error("After umbilical");
             }
           }
           finally {
             if (setOperators.contains(ndi)) {
-              logger.info("Has set operators.");
+              logger.error("Has set operators.");
               try {
                 teardownNode(ndi);
               }
@@ -1436,7 +1438,7 @@ public class StreamingContainer extends YarnContainerMain
                   }
                 }
                 else {
-                  logger.info("Being decremented.");
+                  logger.error("Being decremented.");
                   signal.countDown();
                 }
               }
