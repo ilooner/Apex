@@ -1456,6 +1456,7 @@ public class StreamingContainer extends YarnContainerMain
      */
     try {
       signal.await();
+      logger.error("done waiting");
     }
     catch (InterruptedException ex) {
       logger.debug("Activation of operators interruped.", ex);
