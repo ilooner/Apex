@@ -237,6 +237,11 @@ public interface StreamingContainerUmbilicalProtocol extends VersionedProtocol {
       return stats.id;
     }
 
+    @Override
+    public String toString()
+    {
+      return "ContainerHeartbeat{" + "bufferServerHost=" + bufferServerHost + ", bufferServerPort=" + bufferServerPort + ", jvmName=" + jvmName + ", memoryMBFree=" + memoryMBFree + ", restartRequested=" + restartRequested + ", gcCollectionTime=" + gcCollectionTime + ", gcCollectionCount=" + gcCollectionCount + ", stats=" + stats + ", sentTms=" + sentTms + '}';
+    }
   }
 
   /**

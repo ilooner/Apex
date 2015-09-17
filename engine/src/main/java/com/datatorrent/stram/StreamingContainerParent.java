@@ -191,6 +191,7 @@ public class StreamingContainerParent extends org.apache.hadoop.service.Composit
         @Override
         public ContainerHeartbeatResponse run()
         {
+          LOG.info("fmsg: {}", fmsg);
           return dagManager.processHeartbeat(fmsg);
         }
       });
