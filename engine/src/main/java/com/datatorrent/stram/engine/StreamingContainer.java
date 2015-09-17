@@ -604,6 +604,7 @@ public class StreamingContainer extends YarnContainerMain
       }
       synchronized (this.heartbeatTrigger) {
         try {
+          logger.debug("Failed nodes {}", failedNodes);
           this.heartbeatTrigger.wait(heartbeatIntervalMillis);
         }
         catch (InterruptedException e1) {
@@ -612,6 +613,7 @@ public class StreamingContainer extends YarnContainerMain
         }
       }
 
+      logger.debug("Failed nodes 1 {}", failedNodes);
       long currentTime = System.currentTimeMillis();
       ContainerHeartbeat msg = new ContainerHeartbeat();
       msg.jvmName = jvmName;
@@ -632,6 +634,7 @@ public class StreamingContainer extends YarnContainerMain
 
       ContainerHeartbeatResponse rsp;
       do {
+        logger.debug("Failed nodes 2 {}", failedNodes);
         ContainerStats stats = new ContainerStats(containerId);
         // gather heartbeat info for all operators
         for (Map.Entry<Integer, Node<?>> e : nodes.entrySet()) {
