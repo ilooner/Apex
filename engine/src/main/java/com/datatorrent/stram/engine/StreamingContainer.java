@@ -1410,6 +1410,7 @@ public class StreamingContainer extends YarnContainerMain
             }
           }
           finally {
+            logger.error("Finally block {}", signal.getCount());
             if (setOperators.contains(ndi)) {
               logger.error("Has set operators.");
               try {
@@ -1421,6 +1422,7 @@ public class StreamingContainer extends YarnContainerMain
               }
             }
             else {
+              logger.error("Countdown");
               signal.countDown();
             }
 
