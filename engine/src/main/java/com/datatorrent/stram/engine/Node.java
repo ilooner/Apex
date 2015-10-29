@@ -84,6 +84,7 @@ public abstract class Node<OPERATOR extends Operator> implements Component<Opera
 
   protected boolean DATA_TUPLE_AWARE; /* this is write once variable */
 
+  protected String name;
   protected int id;
   protected final HashMap<String, Sink<Object>> outputs;
   @SuppressWarnings(value = "VolatileArrayField")

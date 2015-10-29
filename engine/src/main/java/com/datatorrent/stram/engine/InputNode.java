@@ -19,6 +19,7 @@
 package com.datatorrent.stram.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,11 @@ import com.datatorrent.api.Operator.ProcessingMode;
 import com.datatorrent.api.Operator.ShutdownException;
 import com.datatorrent.api.Sink;
 import com.datatorrent.netlet.util.DTThrowable;
-
 import com.datatorrent.stram.api.StreamingContainerUmbilicalProtocol.ContainerStats;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple.ConfigurationChange;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple.ConfigurationChangeBatch;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple.PropertyChange;
 import com.datatorrent.stram.tuple.Tuple;
 
 /**
@@ -44,9 +48,21 @@ public class InputNode extends Node<InputOperator>
   private final ArrayList<SweepableReservoir> deferredInputConnections = new ArrayList<SweepableReservoir>();
   protected SweepableReservoir controlTuples;
 
+  //This variable is a performance optimization since we want to avoid doing synchronized unless we have to
+  private boolean updatedConfigurationChanges = false;
+  private final Object configurationChangeLock = new Object();
+  private final ConfigurationChangeBatch configurationChangeBatch = new ConfigurationChangeBatch();
+
   public InputNode(InputOperator operator, OperatorContext context)
   {
     super(operator, context);
+  }
+
+  public void addConfigurationChange(String operatorName, ConfigurationChange configurationChange)
+  {
+    synchronized(configurationChangeLock) {
+      configurationChangeBatch.add(operatorName, configurationChange);
+    }
   }
 
   @Override
@@ -106,10 +122,29 @@ public class InputNode extends Node<InputOperator>
           controlTuples.remove();
           switch (t.getType()) {
             case BEGIN_WINDOW:
-              for (int i = sinks.length; i-- > 0;) {
-                sinks[i].put(t);
+              ModifyConfigurationTuple modifyConfigurationTuple = null;
+
+              synchronized (configurationChangeLock) {
+                Collection<ConfigurationChange> configurationChanges = configurationChangeBatch.remove(this.name);
+
+                if (configurationChanges != null) {
+                  PropertyChange.applyPropertyChanges(configurationChanges, operator);
+                }
+
+                if (!configurationChangeBatch.isEmpty()) {
+                  modifyConfigurationTuple = new ModifyConfigurationTuple(configurationChangeBatch, t.getWindowId());
+                }
               }
-              controlTupleCount++;
+
+              for (Sink<Object> sink : sinks) {
+                if(modifyConfigurationTuple != null) {
+                  sink.put(modifyConfigurationTuple);
+                }
+
+                sink.put(t);
+              }
+
+              controlTupleCount += 2;
               currentWindowId = t.getWindowId();
               if (applicationWindowCount == 0) {
                 insideWindow = true;

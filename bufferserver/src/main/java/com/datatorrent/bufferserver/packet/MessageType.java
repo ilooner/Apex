@@ -25,7 +25,7 @@ package com.datatorrent.bufferserver.packet;
  */
 public enum MessageType
 {
-  NO_MESSAGE(0), PAYLOAD(1), RESET_WINDOW(2), BEGIN_WINDOW(3), END_WINDOW(4), END_STREAM(5), PUBLISHER_REQUEST(6), SUBSCRIBER_REQUEST(7), PURGE_REQUEST(8), RESET_REQUEST(9), CHECKPOINT(10), CODEC_STATE(11), NO_MESSAGE_ODD(127);
+  NO_MESSAGE(0), PAYLOAD(1), RESET_WINDOW(2), BEGIN_WINDOW(3), END_WINDOW(4), END_STREAM(5), PUBLISHER_REQUEST(6), SUBSCRIBER_REQUEST(7), PURGE_REQUEST(8), RESET_REQUEST(9), CHECKPOINT(10), CODEC_STATE(11), MODIFY_CONFIGURATION(12), NO_MESSAGE_ODD(127);
   public static final byte NO_MESSAGE_VALUE = 0;
   public static final byte PAYLOAD_VALUE = 1;
   public static final byte RESET_WINDOW_VALUE = 2;
@@ -38,6 +38,7 @@ public enum MessageType
   public static final byte RESET_REQUEST_VALUE = 9;
   public static final byte CHECKPOINT_VALUE = 10;
   public static final byte CODEC_STATE_VALUE = 11;
+  public static final byte MODIFY_CONFIGURATION_VALUE = 12;
   public static final byte NO_MESSAGE_ODD_VALUE = 127;
 
   public final int getNumber()
@@ -72,6 +73,8 @@ public enum MessageType
         return CHECKPOINT;
       case 11:
         return CODEC_STATE;
+      case 12:
+        return MODIFY_CONFIGURATION;
       case 127:
         return NO_MESSAGE_ODD;
       default:

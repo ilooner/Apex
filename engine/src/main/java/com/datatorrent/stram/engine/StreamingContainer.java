@@ -728,7 +728,7 @@ public class StreamingContainer extends YarnContainerMain
       }
       else {
         logger.debug("request received: {}", req);
-        OperatorRequest requestExecutor = requestFactory.getRequestExecutor(nodes.get(req.operatorId), req);
+        OperatorRequest requestExecutor = requestFactory.getRequestExecutor(node, req);
         if (requestExecutor != null) {
           node.context.request(requestExecutor);
         }
@@ -888,6 +888,7 @@ public class StreamingContainer extends YarnContainerMain
       Node<?> node = Node.retrieveNode(backupAgent.load(ndi.id, ctx.stateless ? Stateless.WINDOW_ID : ndi.checkpoint.windowId), ctx, ndi.type);
       node.currentWindowId = ndi.checkpoint.windowId;
       node.applicationWindowCount = ndi.checkpoint.applicationWindowCount;
+      node.name = ndi.name;
 
       node.setId(ndi.id);
       nodes.put(ndi.id, node);

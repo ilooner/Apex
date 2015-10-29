@@ -35,10 +35,13 @@ import com.datatorrent.api.Sink;
 import com.datatorrent.api.annotation.Stateless;
 
 import com.datatorrent.bufferserver.util.Codec;
-import com.datatorrent.netlet.util.DTThrowable;
 import com.datatorrent.netlet.util.CircularBuffer;
+import com.datatorrent.netlet.util.DTThrowable;
 import com.datatorrent.stram.api.StreamingContainerUmbilicalProtocol.ContainerStats;
 import com.datatorrent.stram.debug.TappedReservoir;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple.ConfigurationChange;
+import com.datatorrent.stram.tuple.ModifyConfigurationTuple.PropertyChange;
 import com.datatorrent.stram.tuple.Tuple;
 
 /**
@@ -229,6 +232,25 @@ public class GenericNode extends Node<Operator>
           Tuple t = activePort.sweep();
           if (t != null) {
             switch (t.getType()) {
+              case MODIFY_CONFIGURATION:
+                ModifyConfigurationTuple modifyConfigurationTuple = (ModifyConfigurationTuple) t;
+
+                if(!modifyConfigurationTuple.sawOperator(this.name)) {
+                  modifyConfigurationTuple.addSeenOperator(this.name);
+                  Collection<ConfigurationChange> configurationChanges = modifyConfigurationTuple.remove(this.name);
+
+                  if (configurationChanges != null) {
+                    PropertyChange.applyPropertyChanges(configurationChanges, operator);
+                  }
+
+                  if(!modifyConfigurationTuple.isEmpty()) {
+                    for(Sink<Object> sink: sinks) {
+                      sink.put(t);
+                    }
+                  }
+                }
+
+                break;
               case BEGIN_WINDOW:
                 if (expectingBeginWindow == totalQueues) {
                   activePort.remove();
