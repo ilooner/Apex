@@ -130,6 +130,7 @@ public class BufferServerSubscriber extends Subscriber implements ByteCounterStr
   public void setup(StreamContext context)
   {
     StreamCodec<?> codec = context.get(StreamContext.CODEC);
+    logger.info("Stream codec class {}", codec.getClass());
     if (codec == null) {
       statefulSerde = ((StatefulStreamCodec <Object>)StreamContext.CODEC.defaultValue).newInstance();
     }
